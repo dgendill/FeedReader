@@ -1,14 +1,21 @@
-$.fn.PaRSS = function(feed_url, item_count, entry_builder) {
-  var ul_set = this,
-  data = {
-    feed_url: feed_url,
-    item_count: item_count,
-    entry_build: entry_builder
+$.fn.FeedReader = function(params) {
+
+  var ul_set = this;
+  
+  var data =  {
+    feedUrl: 'feedUrl',
+    item_count: 'item_count',
+    entryBuilder: function() {
+      //entry_builder
+    }
   };
+
+  $.extend(data, params);
+
   
   
   function initializeFeed() {
-    var feed = new google.feeds.Feed(feed_url);
+    var feed = new google.feeds.Feed(data.feedUrl);
     feed.setResultFormat(google.feeds.Feed.XML_FORMAT);
     if (data._item_count) {
       feed.setNumEntries(data.item_count);
@@ -38,8 +45,8 @@ $.fn.PaRSS = function(feed_url, item_count, entry_builder) {
       }
       //console.log(entries);
       if(!result.error){
-        if (entry_builder) {
-          var list = entry_builder(entries);
+        if (data.entryBuilder) {
+          var list = data.entryBuilder(entries);
         } else {
           var list = getItems(entries);
         }

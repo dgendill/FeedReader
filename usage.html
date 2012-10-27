@@ -1,43 +1,47 @@
 <html>
 <head>
 <title>Feed Reader</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="./feedReader.js"></script>
+
 </head>
 <body>
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
-	var feedURL = "https://twitter.com/statuses/user_timeline/natural_current.rss";
+	var feedUrl = "https://twitter.com/statuses/user_timeline/natural_current.rss";	
+	var entryBuilder = function(entries) {
+		// function for building the entries.
+   		//console.log(entries);
+
+    	var list = "";
+	    $.each(entries, function(i, entry) {
+	      var date = new Date(entry['pubDate']);
+	      date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+
+	      var user = "<a href='"+ entry['link'] +"'>@natural_current</a>";
+	      var url_match = entry['description'].match(/(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi);
+	      var description = entry['description'].replace(/natural_current: /i, user);
+		  if (url_match) {
+		  	description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
+		  }
+	      
+
+
+	      list_item = "";    
+	      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";
+	      list_item += "<div class='content'>" + description + "</div>";
+	      list_item += "<div class='time'>" + date + "</div></div>";
+	      list += "<li class='clearfix'>" + list_item + "</li>";
+	    });
+	    return list;
+    };
 	
-	$("#TwitterRSSFeed").PaRSS(
-        feedURL, // rss feed url (required)
-        5,		 // number of items (optional)
-        function(entries) {
-        	// function for building the entries.
-        	//console.log(entries);
-
-        	var list = "";
-		    $.each(entries, function(i, entry) {
-		      var date = new Date(entry['pubDate']);
-		      date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
-
-		      var user = "<a href='"+ entry['link'] +"'>@natural_current</a>";
-		      var url_match = entry['description'].match(/(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi);
-		      var description = entry['description'].replace(/natural_current: /i, user);
-			  if (url_match) {
-			  	description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
-			  }
-		      
-
-
-		      list_item = "";    
-		      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";
-		      list_item += "<div class='content'>" + description + "</div>";
-		      list_item += "<div class='time'>" + date + "</div></div>";
-		      list += "<li class='clearfix'>" + list_item + "</li>";
-		    });
-		    return list;
-        }
-    );
+	$("#TwitterRSSFeed").FeedReader({
+	    feedUrl: feedUrl,
+	    item_count: 5,
+	    entryBuilder: entryBuilder
+	});
 
 });
 //]]>
