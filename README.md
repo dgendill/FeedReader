@@ -6,11 +6,12 @@ Flexible RSS Feed Reader with built in Twitter and Facebook support.
 Usage
 =====
 
-1. Include jQuery
+* Include jQuery
 
-2. Call FeedReader on a ul element.
+* Call FeedReader on a ul element.
 
-    var twitterFeed = "https://twitter.com/statuses/user_timeline/aplusk.rss";	
+```javascript
+    var twitterFeed = "https://twitter.com/statuses/user_timeline/aplusk.rss";
     var facebookFeed = "http://www.facebook.com/feeds/page.php?format=rss20&id=56759922819";
     
 	$("#TwitterRSSFeed").FeedReader({
@@ -24,7 +25,7 @@ Usage
 		itemCount: 5,
 		entryBuilder: 'facebook'
 	});
-
+    
 	$("#CustomRSSFeed").FeedReader({
 		feedUrl: facebookFeed,
 		itemCount: 5,
@@ -35,9 +36,11 @@ Usage
 			// which will be inserted into the ul element.
 		}
 	});
+```    
+* Include the markup.
 
-3. Include the markup.
-
+```HTML
 	<ul id="TwitterRSSFeed"></ul>
 	<ul id="FacebookRSSFeed"></ul>
 	<ul id="CustomRSSFeed"></ul>
+```
