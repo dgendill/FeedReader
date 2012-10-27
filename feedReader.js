@@ -118,13 +118,21 @@ $.fn.FeedReader = function(params) {
   function facebookBuilder(entries) {
     // function for building the entries for a facebook feed
     var list = "";
-    
+    var userID = config.feedUrl.match(/[0-9]+$/gi);
+    if (userID) {
+      userID = userID[0];
+    } else {
+      throw "Could not parse facebook username in native facebookBuilder function.";
+    }
+
+    var thumbnailURL = "http://graph.facebook.com/" + userID + "/picture?type=square";
+
     $.each(entries, function(i, entry) {
       var date = new Date(entry['pubDate']);
       date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
 
       list_item = "";    
-      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";   
+      list_item += "<div class='thumb'><img src='" + thumbnailURL + "' alt=''></div><div class='col'>";   
       list_item += "<div class='author'><a href='" + entry['link'] + "'>";
       list_item += entry['author'] + "</a></div>";
       list_item += "<div class='content'>" + $("<div>" + entry['description'] + "</div>").text().substr(0,130) + "...</div>";
