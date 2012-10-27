@@ -9,7 +9,7 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
-	var twitterFeed = "https://twitter.com/statuses/user_timeline/natural_current.rss";	
+	var twitterFeed = "https://twitter.com/statuses/user_timeline/aplusk.rss";	
 	var facebookFeed = "http://www.facebook.com/feeds/page.php?format=rss20&id=141070465940267";
 	
 	$("#TwitterRSSFeed").FeedReader({
@@ -17,6 +17,17 @@ $(document).ready(function() {
 	    itemCount: 5,
 	    entryBuilder: 'twitter'
 	});
+
+	// entryformat
+	/*
+		entryFormat = "";
+		entryFormat += "<span class='thumbnail'></span>";
+		entryFormat += "<span class='right'>";
+		entryFormat += "<span class='author'>";
+		entryFormat += "<a href='{postURL}'>{author}</a>";
+		entryFormat += "</span><!-- end .author -->";
+		entryFormat += "</span><!-- end .right -->";
+	*/
 
 	$("#FacebookRSSFeed").FeedReader({
 	    feedUrl: facebookFeed,

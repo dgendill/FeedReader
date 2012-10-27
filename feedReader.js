@@ -85,21 +85,29 @@ $.fn.FeedReader = function(params) {
     // function for building the entries for a twitter feed.
     //console.log(entries);
     //
-
+    var userName = config.feedUrl.match(/[a-zA-Z0-9_-]+(?=.rss)/gi);
+    if (userName) {
+      userName = userName[0];
+    } else {
+      throw "Could not parse twitter username in native twitterBuilder function.";
+    }
     var list = "";
     $.each(entries, function(i, entry) {
       var date = new Date(entry['pubDate']);
       date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
 
-      var user = "<a href='"+ entry['link'] +"'>@natural_current</a>";
+      var user = "<a href='"+ entry['link'] +"'>@" + userName + "</a>";
       var url_match = entry['description'].match(/(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi);
       var description = entry['description'].replace(/natural_current: /i, user);
       if (url_match) {
         description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
       }
 
+      // http://api.twitter.com/1/users/profile_image/#{screen_name}?size={normal|mini|bigger}
+      var thumbnailURL = "http://api.twitter.com/1/users/profile_image/" + userName + "?size=mini";
+
       list_item = "";    
-      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='inner'>";
+      list_item += "<div class='thumb'><img src='" +  thumbnailURL +"' alt=''></div><div class='inner'>";
       list_item += "<div class='content'>" + description + "</div>";
       list_item += "<div class='time'>" + date + "</div></div>";
       list += "<li>" + list_item + "</li>";
@@ -125,5 +133,5 @@ $.fn.FeedReader = function(params) {
     });
     return list;
   };
-  
+
 }; // end jQuery Plugin
