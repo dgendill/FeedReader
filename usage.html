@@ -9,20 +9,34 @@
 <script type="text/javascript">
 //<![CDATA[
 $(document).ready(function() {
-	var feedUrl = "https://twitter.com/statuses/user_timeline/natural_current.rss";	
-	
+	var twitterFeed = "https://twitter.com/statuses/user_timeline/natural_current.rss";	
+	var facebookFeed = "http://www.facebook.com/feeds/page.php?format=rss20&id=141070465940267";
 	
 	$("#TwitterRSSFeed").FeedReader({
-	    feedUrl: feedUrl,
-	    item_count: 5,
+	    feedUrl: twitterFeed,
+	    itemCount: 5,
 	    entryBuilder: 'twitter'
 	});
+
+	$("#FacebookRSSFeed").FeedReader({
+	    feedUrl: facebookFeed,
+	    itemCount: 5,
+	    entryBuilder: 'facebook'
+	});
+	
+
+
 
 });
 //]]>
 </script>
 
-<div id="TwitterRSSFeed"></div>
+<h1>Twitter FEED</h1>
+<ul id="TwitterRSSFeed"></ul>
+
+<h1>Facebook FEED</h1>
+<ul id="FacebookRSSFeed"></ul>
+
 
 </body>
 </html>

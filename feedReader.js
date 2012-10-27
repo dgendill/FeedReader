@@ -84,6 +84,7 @@ $.fn.FeedReader = function(params) {
   function twitterBuilder(entries) {
     // function for building the entries for a twitter feed.
     //console.log(entries);
+    //
 
     var list = "";
     $.each(entries, function(i, entry) {
@@ -93,19 +94,36 @@ $.fn.FeedReader = function(params) {
       var user = "<a href='"+ entry['link'] +"'>@natural_current</a>";
       var url_match = entry['description'].match(/(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi);
       var description = entry['description'].replace(/natural_current: /i, user);
-    if (url_match) {
-      description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
-    }
-      
-
+      if (url_match) {
+        description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
+      }
 
       list_item = "";    
-      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";
+      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='inner'>";
       list_item += "<div class='content'>" + description + "</div>";
+      list_item += "<div class='time'>" + date + "</div></div>";
+      list += "<li>" + list_item + "</li>";
+    });
+    return list;
+  };
+
+  function facebookBuilder(entries) {
+    // function for building the entries for a facebook feed
+    var list = "";
+    
+    $.each(entries, function(i, entry) {
+      var date = new Date(entry['pubDate']);
+      date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+
+      list_item = "";    
+      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";   
+      list_item += "<div class='author'><a href='" + entry['link'] + "'>";
+      list_item += entry['author'] + "</a></div>";
+      list_item += "<div class='content'>" + $("<div>" + entry['description'] + "</div>").text().substr(0,130) + "...</div>";
       list_item += "<div class='time'>" + date + "</div></div>";
       list += "<li class='clearfix'>" + list_item + "</li>";
     });
     return list;
   };
-
-}
+  
+}; // end jQuery Plugin
