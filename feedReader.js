@@ -4,7 +4,7 @@ $.fn.FeedReader = function(params) {
   
   var config =  {
     feedUrl: 'feedUrl',
-    item_count: 'item_count',
+    itemCount: 'itemCount',
     entryBuilder: function(entries) {
       // entry builder function.  Entries is an array of entries
       // taken from the RSS feed.  You can loop through the entries
@@ -15,12 +15,14 @@ $.fn.FeedReader = function(params) {
 
   $.extend(config, params);
 
-  
+  // ------------------
+  // PLUGIN ENTRY POINT 
+  // ------------------
   function init() {
     var feed = new google.feeds.Feed(config.feedUrl);
     feed.setResultFormat(google.feeds.Feed.XML_FORMAT);
-    if (config._item_count) {
-      feed.setNumEntries(config.item_count);
+    if (config._itemCount) {
+      feed.setNumEntries(config.itemCount);
     } else {
       feed.setNumEntries(5);
     }
@@ -45,17 +47,31 @@ $.fn.FeedReader = function(params) {
            //console.log(childNodes[b].childNodes[0]);
          }
       }
+
       //console.log(entries);
+      
       if(!result.error){
-        if (config.entryBuilder) {
-          var list = config.entryBuilder(entries);
-        } else {
-          // entry builder not defined, use some default?
-        }
+        var list = getFormattedFeed(entries);
         $(targetElement).append(list);             
       }
     });
-  }
+  };
+
+  function getFormattedFeed(entries) {
+    if (!config.entryBuilder) {
+      throw "'entryBuilder' parameter not provided when in the plugin was initalized.";
+    }
+
+    if (config.entryBuilder === "twitter") {
+      return twitterBuilder(entries);
+    } else if (config.entryBuilder === "facebook") {
+      return facebookBuilder(entries);
+    } else if (typeof config.entryBuilder === "function") {
+      return config.entryBuilder(entries);
+    } else {
+      throw "'entryBuilder' parameter was provided but is incorrect.";
+    }
+  };
   
  
    // -------------------------------
@@ -63,5 +79,33 @@ $.fn.FeedReader = function(params) {
    // -------------------------------
   $.getScript("https://www.google.com/jsapi", function() {
     google.load("feeds", "1", {"callback": init});      
-  });  
+  });
+
+  function twitterBuilder(entries) {
+    // function for building the entries for a twitter feed.
+    //console.log(entries);
+
+    var list = "";
+    $.each(entries, function(i, entry) {
+      var date = new Date(entry['pubDate']);
+      date = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+
+      var user = "<a href='"+ entry['link'] +"'>@natural_current</a>";
+      var url_match = entry['description'].match(/(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi);
+      var description = entry['description'].replace(/natural_current: /i, user);
+    if (url_match) {
+      description = description.replace(url_match[0], "<a href='" + url_match[0] + "'>" + url_match[0] + "</a>");
+    }
+      
+
+
+      list_item = "";    
+      list_item += "<div class='thumb'><img src='/templates/__custom/img/thumb-author.jpg' alt=''></div><div class='col'>";
+      list_item += "<div class='content'>" + description + "</div>";
+      list_item += "<div class='time'>" + date + "</div></div>";
+      list += "<li class='clearfix'>" + list_item + "</li>";
+    });
+    return list;
+  };
+
 }
